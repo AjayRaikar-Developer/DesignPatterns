@@ -11,11 +11,40 @@ using DesignPatterns.ProtoType;
 using DesignPatterns.Creational_Pattern.Singleton;
 using DesignPatterns.Observer_Pattern;
 using System.Collections.Specialized;
+using DesignPatterns.Structural_Patterns.Adapter.Target;
+using DesignPatterns.Structural_Patterns.Adapter;
+using DesignPatterns.Structural_Patterns.Bridge.Abstraction;
+using DesignPatterns.Structural_Patterns.Bridge.ConcreteImplementor;
+using DesignPatterns.Structural_Patterns.Bridge.RefinedAbstraction;
+using DesignPatterns.Structural_Patterns.Composite.Component;
+using DesignPatterns.Structural_Patterns.Composite.Leaf;
+using DesignPatterns.Structural_Patterns.Composite;
+using DesignPatterns.Structural_Patterns.Decorator.Component;
+using DesignPatterns.Structural_Patterns.Decorator.ConcreteComponent;
+using DesignPatterns.Structural_Patterns.Decorator.ConcreteDecorator;
+using DesignPatterns.Structural_Patterns.Decorator;
+using DesignPatterns.Structural_Patterns.Facade.ShoppingFacade;
+using DesignPatterns.Structural_Patterns.Flyweight;
+using DesignPatterns.Structural_Patterns.Proxy;
+using DesignPatterns.Behavioral_Patterns.Chain_of_Responsibility;
+
+//Learning References
+//https://csharp-video-tutorials.blogspot.com/2017/06/design-patterns-tutorial-for-beginners.html
+//https://www.youtube.com/playlist?list=PL6W8uoQQ2c61X_9e6Net0WdYZidm7zooW
+//https://www.youtube.com/watch?v=rI4kdGLaUiQ&list=PL6n9fhu94yhUbctIoxoVTrklN3LMwTCmd&ab_channel=kudvenkat
+
 
 Console.WriteLine("Hello to Design Patterns!");
 
-#region Creational Pattern
-Console.WriteLine("\n-------------------- Creational Design Pattern --------------------\n");
+Console.WriteLine("There are majorly 3 types of design patterns -");
+Console.WriteLine("1. Creational\r\n2. Structural\r\n3. Behavioral");
+
+
+#region Creational Design Pattern
+Console.WriteLine("\n-------------------- Creational Design Pattern -------------------------\n");
+
+Console.WriteLine("There are 5 creational design patterns -");
+Console.WriteLine("1. Singleton\r\n2. Factory\r\n3. Abstract Factory\r\n4. Builder\r\n5. Prototype");
 
 #region Singleton Design Pattern
 
@@ -35,8 +64,8 @@ Console.WriteLine("\nNormal Singleton - Testing");
 //To Test Normal Singleton in Thread safe do comment above code 
 //fromStudent and fromEmployee Creation as it already creates an instance
 Parallel.Invoke(
-    ()=> PrintEmployee(),
-    ()=> PrintStudent()
+    () => PrintEmployee(),
+    () => PrintStudent()
     );
 
 Console.WriteLine("\nThread Safe Singleton - Testing");
@@ -336,11 +365,172 @@ Console.WriteLine(empSam2.ToString());
 Console.WriteLine("\n----------------------------------------------------------------------\n");
 #endregion
 
-Console.WriteLine("\n-------------------- End of Creational Design Pattern --------------------\n");
+
+Console.WriteLine("\n-------------------- End Of Creational Design Pattern -------------------------\n");
+#endregion
+
+#region Structural Design Pattern
+Console.WriteLine("\n-------------------- Structural Design Pattern -------------------------\n");
+
+Console.WriteLine("There are 7 structural design patterns -");
+Console.WriteLine(" 1. Adapter\r\n 2. Composite\r\n 3. Proxy\r\n " +
+                  "4. Flyweight\r\n 5. Facade\r\n 6. Bridge\r\n 7. Decorator");
+
+#region Adapter Pattern
+Console.WriteLine("\n-------------------- Adapter Design Pattern -------------------------\n");
+
+Console.WriteLine("Check out the Employee response actual its XML we convert it to JSON using this pattern");
+
+
+IEmployeeTarget emp = new EmployeeAdapter();
+string jsonValue = emp.GetAllEmployees();
+Console.WriteLine("Employee Response as JSON - {0}", jsonValue);
+
+Console.WriteLine("\n----------------------------------------------------------------------\n");
+#endregion
+
+#region Composite Pattern
+Console.WriteLine("\n-------------------- Composite Design Pattern -------------------------\n");
+
+Console.WriteLine("Check out the name hirecary printed using this pattern");
+
+IEmployeeComponent John = new EmployeeLeaf("John", "IT");
+IEmployeeComponent Mike = new EmployeeLeaf("Mike", "IT");
+IEmployeeComponent Jason = new EmployeeLeaf("Jason", "HR");
+IEmployeeComponent Eric = new EmployeeLeaf("Eric", "HR");
+IEmployeeComponent Henry = new EmployeeLeaf("Henry", "HR");
+
+IEmployeeComponent James = new CompositeManager("James", "IT")
+{ SubOrdinates = { John, Mike } };
+IEmployeeComponent Philip = new CompositeManager("Philip", "HR")
+{ SubOrdinates = { Jason, Eric, Henry } };
+
+IEmployeeComponent Bob = new CompositeManager("Bob", "Head")
+{ SubOrdinates = { James, Philip } };
+
+Bob.GetDetails(1);
+
+Console.WriteLine("\n----------------------------------------------------------------------\n");
+#endregion
+
+#region Proxy Pattern
+Console.WriteLine("\n-------------------- Proxy Design Pattern -------------------------\n");
+
+Console.WriteLine("Check out the EmployeeServiceProxy Class which is shown using this pattern");
+IEmployeeforProxy employeeProxy = new EmployeeServiceProxy();
+employeeProxy.CreateEmployee("Basic_User", new object());
+employeeProxy.CreateEmployee("Admin", new object());
+employeeProxy.UpdateEmployee("Basic_User", new object());
+employeeProxy.UpdateEmployee("Admin", new object());
+employeeProxy.DeleteEmployee("Basic_User", new object());
+employeeProxy.DeleteEmployee("Admin", new object());
+
+Console.WriteLine("\n----------------------------------------------------------------------\n");
+#endregion
+
+#region Flyweight Pattern
+Console.WriteLine("\n-------------------- Flyweight Design Pattern -------------------------\n");
+
+Console.WriteLine("Check out the Robotic Factory which is shown using this pattern");
+IRobot humanoidRobot1 = RoboticFactory.createRobot("HUMANOID");
+humanoidRobot1.Display(1, 2);
+
+IRobot humanoidRobot2 = RoboticFactory.createRobot("HUMANOID");
+humanoidRobot2.Display(10, 30);
+
+IRobot roboDog1 = RoboticFactory.createRobot("ROBOTICDOG");
+roboDog1.Display(2, 9);
+
+IRobot roboDog2 = RoboticFactory.createRobot("ROBOTICDOG");
+roboDog2.Display(11, 19);
+
+Console.WriteLine("\n----------------------------------------------------------------------\n");
+#endregion
+
+#region Facade Pattern
+Console.WriteLine("\n-------------------- Facade Design Pattern -------------------------\n");
+
+Console.WriteLine("Check out the Cart details which is shown using this pattern");
+
+IUserOrder userOrder = new UserOrder();
+Console.WriteLine("Facade : Start");
+Console.WriteLine("************************************");
+int cartID = userOrder.AddToCart(10, 1);
+int userID = 1234;
+Console.WriteLine("************************************");
+int orderID = userOrder.PlaceOrder(cartID, userID);
+Console.WriteLine("************************************");
+Console.WriteLine("Facade : End CartID = {0}, OrderID = {1}",
+    cartID, orderID);
+
+
+Console.WriteLine("\n----------------------------------------------------------------------\n");
+#endregion
+
+#region Bridge Pattern
+Console.WriteLine("\n-------------------- Bridge Design Pattern -------------------------\n");
+
+Console.WriteLine("Check out the Bank Name & Payment Method which is shown using this pattern");
+
+Payment order = new CardPayment();
+order._IPaymentSystem = new CitiPaymentSystem();
+order.MakePayment();
+
+order._IPaymentSystem = new IDBIPaymentSystem();
+order.MakePayment();
+
+order = new NetBankingPayment();
+order._IPaymentSystem = new CitiPaymentSystem();
+order.MakePayment();
+
+order = new NetBankingPayment();
+order._IPaymentSystem = new IDBIPaymentSystem();
+order.MakePayment();
+
+Console.WriteLine("\n----------------------------------------------------------------------\n");
+#endregion
+
+#region Decorator Pattern
+Console.WriteLine("\n-------------------- Decorator Design Pattern -------------------------\n");
+
+Console.WriteLine("Check out the Price & Discount Price which is shown using this pattern");
+
+ICar car = new Suzuki();
+CarDecorator decorator = new OfferPrice(car);
+Console.WriteLine(string.Format("Make :{0}  Price:{1} DiscountPrice : {2}",
+                  decorator.Make, decorator.GetPrice().ToString(),
+                  decorator.GetDiscountedPrice().ToString()));
+
+Console.WriteLine("\n----------------------------------------------------------------------\n");
+#endregion
+
+Console.WriteLine("\n--------------------  End Of Structural Design Pattern -------------------------\n");
 #endregion
 
 #region Behavioural Pattern
 Console.WriteLine("\n-------------------- Behavioural Design Pattern --------------------\n");
+
+Console.WriteLine("There are 11 behavioral design patterns -");
+Console.WriteLine("1. Template Method\r\n2. Mediator\r\n3. Chain of Responsibility\r\n4. Observer\r\n" +
+    "5. Strategy\r\n6. Command\r\n7. State\r\n8. Visitor\r\n9. Interpreter\r\n10. Iterator\r\n11. Memento");
+
+#region Chain of Responsibility Pattern
+Console.WriteLine("\n-------------------- Chain of Responsibility Pattern  -------------------------\n");
+
+Console.WriteLine("Check out the object creation of logObject where chain of concrete class is used");
+
+LogProcessor logObject = new InfoLogProcessor(new DebugLogProcessor(new ErrorLogProcessor(null)));
+
+logObject.log(LogProcessor.ERROR, "exception happens");
+logObject.log(LogProcessor.DEBUG, "need to debug this ");
+logObject.log(LogProcessor.INFO, "just for info ");
+
+
+
+Console.WriteLine("\n----------------------------------------------------------------------\n");
+#endregion
+
+#region Observable Pattern
 Console.WriteLine("\n-------------------- Observable Pattern --------------------\n");
 
 IStockObservable stockObservable = new StockObservable();
@@ -362,7 +552,7 @@ stockObservable.setStockCount(0);
 stockObservable.setStockCount(500);
 
 Console.WriteLine("\n----------------------------------------------------------------------\n");
-
+#endregion
 
 Console.WriteLine("\n-------------------- End of Behavioural Design Pattern --------------------\n");
 #endregion
