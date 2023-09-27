@@ -27,6 +27,8 @@ using DesignPatterns.Structural_Patterns.Facade.ShoppingFacade;
 using DesignPatterns.Structural_Patterns.Flyweight;
 using DesignPatterns.Structural_Patterns.Proxy;
 using DesignPatterns.Behavioral_Patterns.Chain_of_Responsibility;
+using DesignPatterns.Behavioral_Patterns.State;
+using DesignPatterns.Behavioral_Patterns.State.VendingState;
 
 //Learning References
 //https://csharp-video-tutorials.blogspot.com/2017/06/design-patterns-tutorial-for-beginners.html
@@ -552,6 +554,98 @@ stockObservable.setStockCount(0);
 stockObservable.setStockCount(500);
 
 Console.WriteLine("\n----------------------------------------------------------------------\n");
+#endregion
+
+#region State Pattern
+Console.WriteLine("\n-------------------- State Pattern --------------------\n");
+Console.WriteLine("\nVending Machine Example\n");
+
+VendingMachine vendingMachine = new VendingMachine();
+
+try
+{
+
+    Console.WriteLine("|");
+    Console.WriteLine("filling up the inventory");
+    Console.WriteLine("|");
+
+    fillUpInventory(vendingMachine);
+    displayInventory(vendingMachine);
+
+    Console.WriteLine("|");
+    Console.WriteLine("clicking on InsertCoinButton");
+    Console.WriteLine("|");
+
+    IState vendingState = vendingMachine.getVendingMachineState();
+    vendingState.clickOnInsertCoinButton(vendingMachine);
+
+    vendingState = vendingMachine.getVendingMachineState();
+    vendingState.insertCoin(vendingMachine, Coin.NICKEL);
+    vendingState.insertCoin(vendingMachine, Coin.QUARTER);
+    // vendingState.insertCoin(vendingMachine, Coin.NICKEL);
+
+    Console.WriteLine("|");
+    Console.WriteLine("clicking on ProductSelectionButton");
+    Console.WriteLine("|");
+    vendingState.clickOnStartProductSelectionButton(vendingMachine);
+
+    vendingState = vendingMachine.getVendingMachineState();
+    vendingState.chooseProduct(vendingMachine, 102);
+
+    displayInventory(vendingMachine);
+
+}
+catch (Exception e)
+{
+    displayInventory(vendingMachine);
+}
+
+static void fillUpInventory(VendingMachine vendingMachine)
+{
+    ItemShelf[] slots = vendingMachine.getInventory().getInventory();
+    for (int i = 0; i < slots.Length; i++)
+    {
+        Item newItem = new Item();
+        if (i >= 0 && i < 3)
+        {
+            newItem.setType(ItemType.COKE);
+            newItem.setPrice(12);
+        }
+        else if (i >= 3 && i < 5)
+        {
+            newItem.setType(ItemType.PEPSI);
+            newItem.setPrice(9);
+        }
+        else if (i >= 5 && i < 7)
+        {
+            newItem.setType(ItemType.JUICE);
+            newItem.setPrice(13);
+        }
+        else if (i >= 7 && i < 10)
+        {
+            newItem.setType(ItemType.SODA);
+            newItem.setPrice(7);
+        }
+        slots[i].setItem(newItem);
+        slots[i].setSoldOut(false);
+    }
+}
+
+static void displayInventory(VendingMachine vendingMachine)
+{
+
+    ItemShelf[] slots = vendingMachine.getInventory().getInventory();
+    for (int i = 0; i < slots.Length; i++)
+    {
+
+        Console.WriteLine("CodeNumber: " + slots[i].getCode() +
+                " Item: " + slots[i].getItem().getType().ToString() +
+                " Price: " + slots[i].getItem().getPrice() +
+                " isAvailable: " + !slots[i].isSoldOut());
+    }
+}
+Console.WriteLine("\n----------------------------------------------------------------------\n");
+
 #endregion
 
 Console.WriteLine("\n-------------------- End of Behavioural Design Pattern --------------------\n");
