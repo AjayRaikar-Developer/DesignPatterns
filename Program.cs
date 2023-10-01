@@ -1,4 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using System.Collections.Specialized;
 using DesignPatterns.AbstractFactory;
 using DesignPatterns.Builder.ConcreteBuilder;
 using DesignPatterns.Builder.Director;
@@ -10,7 +11,6 @@ using DesignPatterns.Factory;
 using DesignPatterns.ProtoType;
 using DesignPatterns.Creational_Pattern.Singleton;
 using DesignPatterns.Observer_Pattern;
-using System.Collections.Specialized;
 using DesignPatterns.Structural_Patterns.Adapter.Target;
 using DesignPatterns.Structural_Patterns.Adapter;
 using DesignPatterns.Structural_Patterns.Bridge.Abstraction;
@@ -29,6 +29,17 @@ using DesignPatterns.Structural_Patterns.Proxy;
 using DesignPatterns.Behavioral_Patterns.Chain_of_Responsibility;
 using DesignPatterns.Behavioral_Patterns.State;
 using DesignPatterns.Behavioral_Patterns.State.VendingState;
+using DesignPatterns.Behavioral_Patterns.Mediator.ChatApp;
+using DesignPatterns.Behavioral_Patterns.Mediator.Simple;
+using DesignPatterns.Behavioral_Patterns.TemplateMethod;
+using DesignPatterns.Behavioral_Patterns.Command;
+using DesignPatterns.Behavioral_Patterns.Strategy.With_Strategy;
+using DesignPatterns.Behavioral_Patterns.Strategy.Without_Strategy;
+using DesignPatterns.Behavioral_Patterns.Visitor;
+using DesignPatterns.Behavioral_Patterns.Memento;
+using Employee = DesignPatterns.Factory.Employee;
+using DesignPatterns.Behavioral_Patterns.Interpreter;
+using DesignPatterns.Behavioral_Patterns.Iterator;
 
 //Learning References
 //https://csharp-video-tutorials.blogspot.com/2017/06/design-patterns-tutorial-for-beginners.html
@@ -513,8 +524,9 @@ Console.WriteLine("\n--------------------  End Of Structural Design Pattern ----
 Console.WriteLine("\n-------------------- Behavioural Design Pattern --------------------\n");
 
 Console.WriteLine("There are 11 behavioral design patterns -");
-Console.WriteLine("1. Template Method\r\n2. Mediator\r\n3. Chain of Responsibility\r\n4. Observer\r\n" +
-    "5. Strategy\r\n6. Command\r\n7. State\r\n8. Visitor\r\n9. Interpreter\r\n10. Iterator\r\n11. Memento");
+Console.WriteLine("1. Chain of Responsibility\r\n2. Command\r\n3. Interpreter\r\n4. Iterator\r\n" +
+    "5. Mediator\r\n6. Memento\r\n7. Observer\r\n8. State\r\n9. Strategy\r\n10. Template Method\r\n11. Visitor");
+
 
 #region Chain of Responsibility Pattern
 Console.WriteLine("\n-------------------- Chain of Responsibility Pattern  -------------------------\n");
@@ -527,6 +539,170 @@ logObject.log(LogProcessor.ERROR, "exception happens");
 logObject.log(LogProcessor.DEBUG, "need to debug this ");
 logObject.log(LogProcessor.INFO, "just for info ");
 
+
+
+Console.WriteLine("\n----------------------------------------------------------------------\n");
+#endregion
+
+#region Command Pattern
+Console.WriteLine("\n-------------------- Command Pattern  -------------------------\n");
+
+Console.WriteLine("Check out the MyRemoteController where commands are managed using this pattern");
+//Ac Object
+AirConditioner ac = new AirConditioner();
+
+//Remote
+MyRemoteController remote = new MyRemoteController();
+
+//Create the command then press the button 
+remote.setCommand(new TurnOnAcCommand(ac));
+remote.pressButton();
+
+//Undo Last Operation
+remote.undo();
+
+
+Console.WriteLine("\n----------------------------------------------------------------------\n");
+#endregion
+
+#region Interpreter Pattern
+Console.WriteLine("\n-------------------- Interpreter Pattern  -------------------------\n");
+
+Console.WriteLine("Check out the MyRemoteController where commands are maged using this pattern");
+
+var expressions = new List<RomanExpression>
+{
+    new RomanHunderdExpression(),
+    new RomanTenExpression(),
+    new RomanOneExpression(),
+};
+
+var context = new RomanContext(5);
+foreach (var expression in expressions)
+{
+    expression.Interpret(context);
+}
+Console.WriteLine($"Translating Arabic numerals to Roman numerals: 5 = {context.Output}");
+
+context = new RomanContext(81);
+foreach (var expression in expressions)
+{
+    expression.Interpret(context);
+}
+Console.WriteLine($"Translating Arabic numerals to Roman numerals: 81 = {context.Output}");
+
+context = new RomanContext(733);
+foreach (var expression in expressions)
+{
+    expression.Interpret(context);
+}
+Console.WriteLine($"Translating Arabic numerals to Roman numerals: 733 = {context.Output}");
+
+Console.WriteLine("\n----------------------------------------------------------------------\n");
+#endregion
+
+#region Iterator Pattern
+Console.WriteLine("\n-------------------- Iterator Pattern  -------------------------\n");
+
+Console.WriteLine("Check out the Behavioral_Patterns.Iterator class where everything are managed using this pattern");
+// create the collection
+PeopleCollection people = new();
+
+people.Add(new Person("Kevin Dockx", "Belgium"));
+people.Add(new Person("Gill Cleeren", "Belgium"));
+people.Add(new Person("Roland Guijt", "The Netherlands"));
+people.Add(new Person("Thomas Claudius Huber", "Germany"));
+
+// create the iterator
+var peopleIterator = people.CreateIterator();
+
+// use the iterator to run through the people
+// in the collection; they should come out 
+// in alphabetical order
+for (Person person = peopleIterator.First();
+    !peopleIterator.IsDone;
+    person = peopleIterator.Next())
+{
+    Console.WriteLine(person?.Name);
+}
+
+
+Console.WriteLine("\n----------------------------------------------------------------------\n");
+#endregion
+
+#region Mediator Pattern
+Console.WriteLine("\n-------------------- Mediator Pattern  -------------------------\n");
+
+Console.WriteLine("### Check out the Simple Example using this pattern ###");
+
+SimpleExample();
+
+Console.WriteLine("\n### Check out the ChatApp Example using this pattern ###");
+
+var teamChat = new TeamChatroom();
+
+var steve = new Developer("Steve");
+var justin = new Developer("Justin");
+var jenna = new Developer("Jenna");
+var kim = new Tester("Kim");
+var julia = new Tester("Julia");
+teamChat.RegisterMembers(steve, justin, jenna, kim, julia);
+
+steve.Send("Hey everyone, we're going to be deploying at 2pm today.");
+kim.Send("Ok, thanks for letting us know.");
+
+Console.WriteLine();
+steve.SendTo<Developer>("Make sure to execute your unit tests before checking in!");
+
+static void SimpleExample()
+{
+    var mediator = new ConcreteMediator();
+    //var c1 = new Colleague1();
+    //var c2 = new Colleague2();
+    ////mediator.Colleague1 = c1;
+    ////mediator.Colleague2 = c2;
+    //mediator.Register(c1);
+    //mediator.Register(c2);
+    var c1 = mediator.CreateColleague<Colleague1>();
+    var c2 = mediator.CreateColleague<Colleague2>();
+
+    c1.Send("Hello, World! (from c1)");
+    c2.Send("hi, there! (from c2)");
+}
+Console.WriteLine("\n----------------------------------------------------------------------\n");
+#endregion
+
+#region Memento Pattern
+Console.WriteLine("\n-------------------- Memento Pattern  -------------------------\n");
+
+Console.WriteLine("Check out the Behavioral_Patterns.Memento where undo's are managed using this pattern");
+
+
+CommandManager commandManager = new();
+IEmployeeManagerRepository repository = new EmployeeManagerRepository();
+
+commandManager.Invoke(
+    new AddEmployeeToManagerList(repository, 1, new DesignPatterns.Behavioral_Patterns.Memento.Employee(111, "Kevin")));
+repository.WriteDataStore();
+
+commandManager.Undo();
+repository.WriteDataStore();
+
+commandManager.Invoke(
+    new AddEmployeeToManagerList(repository, 1, new DesignPatterns.Behavioral_Patterns.Memento.Employee(222, "Clara")));
+repository.WriteDataStore();
+
+commandManager.Invoke(
+    new AddEmployeeToManagerList(repository, 2, new DesignPatterns.Behavioral_Patterns.Memento.Employee(333, "Tom")));
+repository.WriteDataStore();
+
+// try adding the same employee again
+commandManager.Invoke(
+    new AddEmployeeToManagerList(repository, 2, new DesignPatterns.Behavioral_Patterns.Memento.Employee(333, "Tom")));
+repository.WriteDataStore();
+
+commandManager.UndoAll();
+repository.WriteDataStore();
 
 
 Console.WriteLine("\n----------------------------------------------------------------------\n");
@@ -605,7 +781,7 @@ static void fillUpInventory(VendingMachine vendingMachine)
     ItemShelf[] slots = vendingMachine.getInventory().getInventory();
     for (int i = 0; i < slots.Length; i++)
     {
-        Item newItem = new Item();
+        DesignPatterns.Behavioral_Patterns.State.Item newItem = new DesignPatterns.Behavioral_Patterns.State.Item();
         if (i >= 0 && i < 3)
         {
             newItem.setType(ItemType.COKE);
@@ -647,6 +823,95 @@ static void displayInventory(VendingMachine vendingMachine)
 Console.WriteLine("\n----------------------------------------------------------------------\n");
 
 #endregion
+
+#region Strategy Pattern
+Console.WriteLine("\n-------------------- Strategy Pattern  -------------------------\n");
+
+Console.WriteLine("xxxxxxxxxxxxxxx Don't do this xxxxxxxxxxxxxxxxxxxxxx");
+
+Console.WriteLine("If we don't use strategy pattern\n");
+Console.WriteLine("Where Vehicle class is parent & OffRoad & Sports Vehicle are Child");
+Console.WriteLine("But both have sports drive which is duplicate work in different class");
+
+Console.Write("OffRoadVehicle: ");
+Vehicle vehi = new OffRoadVehicle();
+vehi.Drive();
+
+Console.Write("SportsVehicle: ");
+vehi = new SportsVehicle();
+vehi.Drive();
+Console.WriteLine("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+
+
+Console.WriteLine("\n\nCheck out the VehicleManager where Strategy are managed using this pattern and avoid duplicacy");
+Console.Write("SportsCar: ");
+VehicleManager Vehicle = new SportsCar();
+Vehicle.Drive();
+
+Console.Write("OffRoadCar: ");
+Vehicle = new OffRoadCar();
+Vehicle.Drive();
+
+Console.Write("GoodsCar: ");
+Vehicle = new GoodsCar();
+Vehicle.Drive();
+
+
+Console.WriteLine("\n----------------------------------------------------------------------\n");
+#endregion
+
+#region Template Method Pattern
+Console.WriteLine("\n-------------------- Template Method Pattern  -------------------------\n");
+
+Console.WriteLine("Check out the PanFoodServiceBase where Template is created & used by other services");
+Console.WriteLine("\nPie Baking Service:");
+LoggerAdapter logger = new LoggerAdapter();
+var pie = new PieBakingService(logger);
+pie.Prepare();
+Console.WriteLine(logger.Dump());
+
+Console.WriteLine("\nPizza Baking Service:");
+logger = new LoggerAdapter();
+var pizza = new PizzaBakingService(logger);
+pizza.Prepare();
+Console.WriteLine(logger.Dump());
+
+Console.WriteLine("\nCold Veggie Pize BakingService:");
+logger = new LoggerAdapter();
+var coldPizza = new ColdVeggiePizzaBakingService(logger);
+coldPizza.Prepare();
+Console.WriteLine(logger.Dump());
+
+Console.WriteLine("\n----------------------------------------------------------------------\n");
+#endregion
+
+#region Visitor Pattern
+Console.WriteLine("\n-------------------- Visitor Pattern  -------------------------\n");
+
+Console.WriteLine("Check out the Visitor Class where logic are maged using this pattern");
+
+List<IVisitableElement> items = new List<IVisitableElement>
+            {
+                new Book(12345, 11.99),
+                new Book(78910, 22.79),
+                new Vinyl(11198, 17.99),
+                new Book(63254, 9.79)
+            };
+
+var cart = new ObjectStructure(items);
+var discountVisitor = new DiscountVisitor();
+var salesVisitor = new SalesVisitor();
+
+cart.ApplyVisitor(discountVisitor);
+cart.ApplyVisitor(salesVisitor);
+
+discountVisitor.Reset();
+cart.RemoveItem(items[2]);
+cart.ApplyVisitor(discountVisitor);
+
+Console.WriteLine("\n----------------------------------------------------------------------\n");
+#endregion
+
 
 Console.WriteLine("\n-------------------- End of Behavioural Design Pattern --------------------\n");
 #endregion

@@ -120,4 +120,4 @@ Prototype is unique among the other creational patterns as it doesn't require a 
 - File 
 - Configuration 
 - Cache
-- Session based shopping cart 
+- Session based shopping cart
